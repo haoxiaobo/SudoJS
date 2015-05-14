@@ -12,25 +12,22 @@ Cell.prototype.toString = function () {
         return "";
     }
     return this.N.toString();
-}
+};
 
 // 1-5
 function Sudo(width, height, canvasGame) {
-    this.Cells = null; // 是否
-    this.Width = width;
-    this.Height = height;
-    this.ItemWidth = width / 9;
-    this.ItemHeight = height / 9;
-    this.ShowOptionNumber = false;
-    this.CanvasGame = canvasGame;
+    this.Cells = null; // 9*9的格子，会在Init里做初始化
+    this.Width = width; // 游戏的宽
+    this.Height = height; // 游戏的高
+    this.ItemWidth = width / 9; // 每个格子的宽
+    this.ItemHeight = height / 9; // 每个格子的高
+    this.ShowOptionNumber = false; //是否显示可选数字
+    this.CanvasGame = canvasGame; // 保存本游戏的canvas
 
-    this.EditingCellIndex = null;
-    this.EditPannel = null;
+    this.EditingCellIndex = null; // 正在编辑状态的格子索引
+    this.EditPannel = null; // 正在编辑状态时，指向编辑板实例。不在编辑状态时，指向null;
     
-    this.CanvasInBackGround = document.createElement("canvas");
-    this.CanvasInBackGround.width = this.Width;
-    this.CanvasInBackGround.height = this.Height;
-    this.ctx2 = this.CanvasInBackGround.getContext("2d");
+    this.ctx2 = this.CanvasGame.getContext("2d");
 
     // 初始化一个sudo.
     this.Init = function (level) {
@@ -66,9 +63,9 @@ function Sudo(width, height, canvasGame) {
 
         this.CalcAllOptNumber();
 
-//        cavanssudo.addEventListener('mousemove', onMouseMove, false);
-        cavanssudo.addEventListener('mousedown', onMouseDown, false);
-        cavanssudo.addEventListener('mouseup', onMouseUp, false);
+        this.CanvasGame.addEventListener('mousemove', onMouseMove, false);
+        this.CanvasGame.addEventListener('mousedown', onMouseDown, false);
+        this.CanvasGame.addEventListener('mouseup', onMouseUp, false);
 
     };
 
@@ -82,7 +79,7 @@ function Sudo(width, height, canvasGame) {
                 }
             }
         }
-    }
+    };
 
     // 交换整个sudo里的两个数字
     this.swapSudoNumber = function (n1, n2) {
@@ -106,17 +103,13 @@ function Sudo(width, height, canvasGame) {
 
     // 绘制sudo
     this.Draw = function (){
-        this.DrawInBkContext();
-        ctx.drawImage(this.CanvasInBackGround, 0,0);
-    }
-    this.DrawInBkContext = function () {
-
+        
         var width = this.Width;
         var height = this.Height;
         var itemWidth = width / 9;
         var itemHeight = height / 9;
 
-        ctx2 = this.ctx2;
+        var ctx2 = this.ctx2;
         
         ctx2.fillStyle = "#ffffff";
         ctx2.fillRect(0, 0, this.Width, this.Height);
@@ -137,7 +130,7 @@ function Sudo(width, height, canvasGame) {
                     if (this.ShowOptionNumber) {
                         var optns = cell.OptNumbes.join("");
                         // 分为5个一行
-                        optnList = this.ReSegString(optns, 3);
+                        var optnList = this.ReSegString(optns, 3);
                         ctx2.save();
                         ctx2.font = "Bold " + this.ItemWidth / 3 + "px Arial";
                         for (var k = 0; k < optnList.length; k++) {
@@ -201,12 +194,10 @@ function Sudo(width, height, canvasGame) {
         }
         l.push(s2);
         return l;
-    }
+    };
 
     // 从一个座标计算下面的格子索引值
     this.getCellIndex = function (pos) {
-        var width = this.Width;
-        var height = this.Heigth;
         var j = Math.floor(pos.x / this.ItemWidth);
         var i = Math.floor(pos.y / this.ItemHeight);
         return {
@@ -283,7 +274,7 @@ function Sudo(width, height, canvasGame) {
     this.ShowWin = function ()
     {
         alert("You Win!!!");
-    }
+    };
 
     // 计算可以用于该格的N们
     this.CalcOptNumber = function (index) {
@@ -333,7 +324,7 @@ function Sudo(width, height, canvasGame) {
                 this.Cells[i][j].InConflict = this.CheckConflict({ i: i, j: j });
             }
         }
-    }
+    };
 
     // 检查是否已经赢了
     this.CheckWin = function ()
@@ -348,11 +339,11 @@ function Sudo(width, height, canvasGame) {
             }
         }
         return true;
-    }
+    };
 
     // 检查某格是否有冲突
     this.CheckConflict = function (index) {
-        var HasConf = false;
+        
         var cell = this.Cells[index.i][index.j];
         if (cell.N == null || cell.N == undefined)
         {
@@ -394,7 +385,7 @@ function Sudo(width, height, canvasGame) {
 
         return this.ShowOptionNumber;
 
-    }
+    };
 
     // 切换编辑模式
     this.ToggleEditMode = function ()
@@ -426,7 +417,7 @@ function Sudo(width, height, canvasGame) {
         this.EditPannel = null;
         this.EditingCellIndex = null;
         return this.EditMode;
-    }
+    };
 
     this.ClearAll = function()
     {
@@ -443,7 +434,7 @@ function Sudo(width, height, canvasGame) {
         this.CheckAllConflict();
         this.EditPannel = null;
         this.EditingCellIndex = null;
-    }
+    };
 }
 
 function InArray(obj, arr) {
@@ -502,7 +493,7 @@ EditPannel.prototype.Draw = function () {
             ctx.fillText(i.toString(), itemX + this.ItemWidth / 3, itemY + this.ItemWidth / 1.5);
         }
     }
-}
+};
 
 // 得到给定座标上的数字。
 EditPannel.prototype.GetHitNumber = function (x, y) {
@@ -523,7 +514,7 @@ EditPannel.prototype.GetHitNumber = function (x, y) {
         return null;
     }
     return n;
-}
+};
 
 // debug用的
 function allPrpos(obj) {
@@ -531,7 +522,7 @@ function allPrpos(obj) {
     var props = "";
     // 开始遍历 
     for (var p in obj) { // 方法 
-        if (typeof (obj[p]) == " function ") {
+        if (typeof (obj[p]) == "function") {
             //obj[p]();
             props += p + " = function() <br /> ";
         } else { // p 为属性名称，obj[p]为对应属性的值 
@@ -544,14 +535,13 @@ function allPrpos(obj) {
 
 // 事件处理。
 function onMouseMove(evt) {
-    var loc = getPointOnCanvas(evt.target, evt.x, evt.y);
-    var index = sudo.getCellIndex(evt.target, loc);
+    //    var loc = getPointOnCanvas(evt.target, evt.x, evt.y);
+    //    var index = sudo.getCellIndex(evt.target, loc);
 }
 
 function onMouseDown(evt) {
     //var loc = getPointOnCanvas(evt.target, evt.x, evt.y);
     //sudo.ProcMouseClick(loc);
-
     //spPos.innerHTML = allPrpos(evt);
 }
 
@@ -565,10 +555,10 @@ function onMouseUp(evt) {
 // 座标转换。请用event.X，Y来转换，不要用PageX,PageY, 不然滚屏时出错误。
 function getPointOnCanvas(canvas, x, y) {
     var bbox = canvas.getBoundingClientRect();
-    var x = (x - bbox.left) * (canvas.width / bbox.width);
-    var y = (y - bbox.top) * (canvas.height / bbox.height);
+    var x2 = (x - bbox.left) * (canvas.width / bbox.width);
+    var y2 = (y - bbox.top) * (canvas.height / bbox.height);
     return {
-        x: x,
-        y: y
+        x: x2,
+        y: y2
     };
 }

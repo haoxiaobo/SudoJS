@@ -22,10 +22,10 @@
                     <option value="4">较难</option>
                     <option value="5">困难</option>
                 </select>
-                <button id="btnInitSudo" onclick="InitSudo()">生成新数独</button>
-                <button id="btnEditMode" onclick="EditMode()">编辑数独</button>
-                <button id="btnToggleShowOptNumber" onclick="ToggleShowOptNumber()">显示提示</button>
-                <button id="btnClearAll" onclick="ClearAll()">全部清除</button>
+                <button id="btnInitSudo" onclick="btnInitSudo_Click()">生成新数独</button>
+                <button id="btnEditMode" onclick="btnEditMode_Click()">编辑数独</button>
+                <button id="btnShowOptNumber" onclick="btnShowOptNumber_Click()">显示提示</button>
+                <button id="btnClearAll" onclick="btnClearAll_Click()">全部清除</button>
             </td>
             <td><span id="spPos"></span></td>
         </tr>
@@ -34,7 +34,7 @@
     <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
     <script src="sudo.js"></script>
     <script>
-    function InitSudo() {
+    function btnInitSudo_Click() {
         if (confirm("真得要开一新局？")) {
             var seleLevel = document.getElementById("seleLevel");
             sudo.Init(seleLevel.value);
@@ -42,7 +42,7 @@
         }
     }
 
-    function ToggleShowOptNumber() {
+    function btnShowOptNumber_Click() {
         var showopt = sudo.ToggleShowOptionNumber();
 
         var btn = document.getElementById("btnToggleShowOptNumber");
@@ -54,7 +54,7 @@
         sudo.Draw();
     }
 
-    function EditMode() {
+    function btnEditMode_Click() {
         var editmode = sudo.ToggleEditMode();
         var btn = document.getElementById("btnEditMode");
         if (editmode)
@@ -65,13 +65,14 @@
 
     }
 
-    function ClearAll() {
+    function btnClearAll_Click() {
         if (confirm("真得要清除所有的自填数字？")) {
             sudo.ClearAll();
             sudo.Draw();
         }
     }
 
+    // for debug
     function getInfo() {
         var s = "";
         s += " 网页可见区域宽：" + document.body.clientWidth + "\n";
@@ -99,22 +100,18 @@
 
     var spPos = document.getElementById("spPos");
     var cavanssudo = document.getElementById("canvassudo");
-
     var ctx = cavanssudo.getContext("2d");
-    
-    var c2 = document.createElement("canvas");
-    var ctx2 = c2.getContext("2d");
     
     var sudowidth = 400;
     var sudoheight = 400;
     
-    cavanssudo.style.width = sudowidth;
-    cavanssudo.style.height = sudoheight;
-    
+    cavanssudo.style.width = sudowidth + "px";
+    cavanssudo.style.height = sudoheight + "px";
+    // 为了解决在retina屏上模糊的问题，需要用渲染像素比例来乘以canvas的style宽，作为canvas的内容像像素数
     cavanssudo.width = sudowidth *  window.devicePixelRatio;
     cavanssudo.height = sudoheight * window.devicePixelRatio;
     
-    var sudo = new Sudo(cavanssudo.width, cavanssudo.height);
+    var sudo = new Sudo(cavanssudo.width, cavanssudo.height, cavanssudo);
 
     var seleLevel = document.getElementById("seleLevel");
     sudo.Init(seleLevel.value);
