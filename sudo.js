@@ -1,8 +1,9 @@
-﻿function Cell(n) {
-    this.N = n;
-    this.Fixed = true;
-    this.OptNumbes = null;
-    this.InConflict = false;
+﻿// 格子类， 一个对象代表一个小格格。
+function Cell(n) {
+    this.N = n;   //数字类
+    this.Fixed = true; // 是否是固定的数字格？ 
+    this.OptNumbes = null; // 可填数字
+    this.InConflict = false;  // 是否此格与其他格有冲突
 }
 
 
@@ -15,7 +16,7 @@ Cell.prototype.toString = function () {
 
 // 1-5
 function Sudo(width, height, canvasGame) {
-    this.Cells = null;
+    this.Cells = null; // 是否
     this.Width = width;
     this.Height = height;
     this.ItemWidth = width / 9;
