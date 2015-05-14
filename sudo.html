@@ -1,0 +1,126 @@
+﻿<!DOCTYPE html>
+<!-- saved from url=(0039)http://218.244.138.14/hxbapps/sudo.html -->
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+    <title></title>
+    <style>
+        #canvassudo {
+        border:1px solid black;
+        width:400px;height:400px;
+        }
+
+    </style>
+</head>
+<body>
+    <table>
+        <tbody><tr>
+            <td>
+                <canvas id="canvassudo" width="400" height="400"></canvas><br>
+                难度：<select id="seleLevel">
+                    <option value="2">容易</option>
+                    <option value="3" selected="selected">一般</option>
+                    <option value="4">较难</option>
+                    <option value="5">困难</option>
+                </select>
+                <button id="btnInitSudo" onclick="InitSudo()">生成新数独</button>
+                <button id="btnEditMode" onclick="EditMode()">编辑数独</button>
+                <button id="btnToggleShowOptNumber" onclick="ToggleShowOptNumber()">显示提示</button>
+                <button id="btnClearAll" onclick="ClearAll()">全部清除</button>
+            </td>
+            <td><span id="spPos"></span></td>
+        </tr>
+    </tbody></table>
+
+    <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+    <script src="sudo.js"></script>
+    <script>
+    function InitSudo() {
+        if (confirm("真得要开一新局？")) {
+            var seleLevel = document.getElementById("seleLevel");
+            sudo.Init(seleLevel.value);
+            sudo.Draw();
+        }
+    }
+
+    function ToggleShowOptNumber() {
+        var showopt = sudo.ToggleShowOptionNumber();
+
+        var btn = document.getElementById("btnToggleShowOptNumber");
+        if (showopt)
+            btn.innerText = "隐藏提示";
+        else
+            btn.innerText = "显示提示";
+
+        sudo.Draw();
+    }
+
+    function EditMode() {
+        var editmode = sudo.ToggleEditMode();
+        var btn = document.getElementById("btnEditMode");
+        if (editmode)
+            btn.innerText = "结束编辑";
+        else
+            btn.innerText = "编辑模式";
+        sudo.Draw();
+
+    }
+
+    function ClearAll() {
+        if (confirm("真得要清除所有的自填数字？")) {
+            sudo.ClearAll();
+            sudo.Draw();
+        }
+    }
+
+    function getInfo() {
+        var s = "";
+        s += " 网页可见区域宽：" + document.body.clientWidth + "\n";
+        s += " 网页可见区域高：" + document.body.clientHeight + "\n";
+        s += " 网页可见区域宽：" + document.body.offsetWidth + " (包括边线和滚动条的宽)" + "\n";
+        s += " 网页可见区域高：" + document.body.offsetHeight + " (包括边线的宽)" + "\n";
+        s += " 网页正文全文宽：" + document.body.scrollWidth + "\n";
+        s += " 网页正文全文高：" + document.body.scrollHeight + "\n";
+        s += " 网页被卷去的高(ff)：" + document.body.scrollTop + "\n";
+        s += " 网页被卷去的高(ie)：" + document.documentElement.scrollTop + "\n";
+        s += " 网页被卷去的左：" + document.body.scrollLeft + "\n";
+        s += " 网页正文部分上：" + window.screenTop + "\n";
+        s += " 网页正文部分左：" + window.screenLeft + "\n";
+        s += " 屏幕分辨率的高：" + window.screen.height + "\n";
+        s += " 屏幕分辨率的宽：" + window.screen.width + "\n";
+        s += " 屏幕可用工作区高度：" + window.screen.availHeight + "\n";
+        s += " 屏幕可用工作区宽度：" + window.screen.availWidth + "\n";
+        s += " 你的屏幕设置是 " + window.screen.colorDepth + " 位彩色" + "\n";
+        s += " 你的屏幕设置 " + window.screen.deviceXDPI + " 像素/英寸" + "\n";
+        s += " 缩放比率 " + window.devicePixelRatio + " \n";
+        alert(s);
+    }
+
+    //getInfo();  
+
+    var spPos = document.getElementById("spPos");
+    var cavanssudo = document.getElementById("canvassudo");
+
+    var ctx = cavanssudo.getContext("2d");
+    
+    var c2 = document.createElement("canvas");
+    var ctx2 = c2.getContext("2d");
+    
+    var sudowidth = 400;
+    var sudoheight = 400;
+    
+    cavanssudo.style.width = sudowidth;
+    cavanssudo.style.height = sudoheight;
+    
+    cavanssudo.width = sudowidth *  window.devicePixelRatio;
+    cavanssudo.height = sudoheight * window.devicePixelRatio;
+    
+    var sudo = new Sudo(cavanssudo.width, cavanssudo.height);
+
+    var seleLevel = document.getElementById("seleLevel");
+    sudo.Init(seleLevel.value);
+    sudo.Draw();
+    </script>
+
+
+
+</body></html>
