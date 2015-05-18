@@ -11,6 +11,7 @@ Cell.prototype.toString = function () {
     if (this.N == null || this.N == undefined) {
         return "";
     }
+
     return this.N.toString();
 };
 
