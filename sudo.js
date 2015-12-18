@@ -17,6 +17,7 @@ Cell.prototype.toString = function () {
 
 // 1-5
 function Sudo(width, height, canvasGame) {
+    
     this.Cells = null; // 9*9的格子，会在Init里做初始化
     this.Width = width; // 游戏的宽
     this.Height = height; // 游戏的高
@@ -24,12 +25,18 @@ function Sudo(width, height, canvasGame) {
     this.ItemHeight = height / 9; // 每个格子的高
     this.ShowOptionNumber = false; //是否显示可选数字
     this.CanvasGame = canvasGame; // 保存本游戏的canvas
-
+    this.bUseBuffer = true;
     this.EditingCellIndex = null; // 正在编辑状态的格子索引
     this.EditPannel = null; // 正在编辑状态时，指向编辑板实例。不在编辑状态时，指向null;
     
+    // double buffer
     this.ctx2 = this.CanvasGame.getContext("2d");
-
+    
+    this.setUseBuffer = function (b)
+    {
+        this.bUseBuffer = b;
+    }
+    
     // 初始化一个sudo.
     this.Init = function (level) {
         this.Cells = [
@@ -109,8 +116,25 @@ function Sudo(width, height, canvasGame) {
         var height = this.Height;
         var itemWidth = width / 9;
         var itemHeight = height / 9;
-
-        var ctx2 = this.ctx2;
+        
+        
+        var cvBuffer = null; 
+        var ctx2 = null;
+        if (this.bUseBuffer)
+        {
+            cvBuffer = document.createElement("canvas");
+            cvBuffer.width = this.CanvasGame.width;
+            cvBuffer.height = this.CanvasGame.height;
+            cvBuffer.style.width = this.CanvasGame.style.width;
+            cvBuffer.style.height = this.CanvasGame.style.height;
+            
+            ctx2 = cvBuffer.getContext("2d"); 
+        }
+        else
+        {
+            ctx2 = this.ctx2;
+        }
+       
         
         ctx2.fillStyle = "#ffffff";
         ctx2.fillRect(0, 0, this.Width, this.Height);
@@ -176,6 +200,15 @@ function Sudo(width, height, canvasGame) {
             ctx2.lineTo(width, i * itemHeight);
 
             ctx2.stroke(); // 进行线的着色，这时整条线才变得可见
+        }
+        
+        if (this.bUseBuffer)
+        {
+            this.ctx2.drawImage(cvBuffer, 0, 0);
+        }
+        else
+        {
+            
         }
     };
 
