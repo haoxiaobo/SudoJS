@@ -1,0 +1,117 @@
+﻿<!DOCTYPE html>
+<!-- saved from url=(0039)http://218.244.138.14/hxbapps/sudo.html -->
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+    <title></title>
+    <link rel="icon" href="sudo.ico" type="image/x-icon" />
+    <link rel="shortcut icon" href="sudo.ico" type="image/x-icon" />
+    <style>
+        #canvassudo {
+        border:1px solid black;
+        width:400px;height:400px;
+        }
+
+    </style>
+</head>
+<body>
+    <table>
+        <tbody><tr>
+            <td>
+                <canvas id="canvassudo" width="400" height="400"></canvas><br>
+                难度：<select id="seleLevel">
+                    <option value="2">容易</option>
+                    <option value="3" selected="selected">一般</option>
+                    <option value="4">较难</option>
+                    <option value="5">困难</option>
+                <option value="6">极难</option>
+                </select>
+                <button id="btnInitGame" onclick="btnInitGame_Click()">生成新数独</button>
+            </td>
+            <td><span id="spPos"></span></td>
+        </tr>
+    </tbody></table>
+
+    <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+    <script src="mime.js"></script>
+    <script>
+    function btnInitGame_Click() {
+        if (confirm("真得要开一新局？")) {
+            CreateNewGame();
+        }
+    }
+
+    // for debug
+    function getInfo() {
+        var s = "";
+        s += " 网页可见区域宽：" + document.body.clientWidth + "\n";
+        s += " 网页可见区域高：" + document.body.clientHeight + "\n";
+        s += " 网页可见区域宽：" + document.body.offsetWidth + " (包括边线和滚动条的宽)" + "\n";
+        s += " 网页可见区域高：" + document.body.offsetHeight + " (包括边线的宽)" + "\n";
+        s += " 网页正文全文宽：" + document.body.scrollWidth + "\n";
+        s += " 网页正文全文高：" + document.body.scrollHeight + "\n";
+        s += " 网页被卷去的高(ff)：" + document.body.scrollTop + "\n";
+        s += " 网页被卷去的高(ie)：" + document.documentElement.scrollTop + "\n";
+        s += " 网页被卷去的左：" + document.body.scrollLeft + "\n";
+        s += " 网页正文部分上：" + window.screenTop + "\n";
+        s += " 网页正文部分左：" + window.screenLeft + "\n";
+        s += " 屏幕分辨率的高：" + window.screen.height + "\n";
+        s += " 屏幕分辨率的宽：" + window.screen.width + "\n";
+        s += " 屏幕可用工作区高度：" + window.screen.availHeight + "\n";
+        s += " 屏幕可用工作区宽度：" + window.screen.availWidth + "\n";
+        s += " 你的屏幕设置是 " + window.screen.colorDepth + " 位彩色" + "\n";
+        s += " 你的屏幕设置 " + window.screen.deviceXDPI + " 像素/英寸" + "\n";
+        s += " 缩放比率 " + window.devicePixelRatio + " \n";
+        console.log(s);
+    }
+
+    getInfo();
+
+    var spPos = document.getElementById("spPos");
+    var cavanssudo = document.getElementById("canvassudo");
+    var ctx = cavanssudo.getContext("2d");
+    
+    var sudowidth = 400;
+    var sudoheight = 400;
+    
+    cavanssudo.style.width = sudowidth + "px";
+    cavanssudo.style.height = sudoheight + "px";
+    // 为了解决在retina屏上模糊的问题，需要用渲染像素比例来乘以canvas的style宽，作为canvas的内容像像素数
+    cavanssudo.width = sudowidth *  window.devicePixelRatio;
+    cavanssudo.height = sudoheight * window.devicePixelRatio;
+    var gameCol = 20;
+    var gameRow = 20;
+
+    function CreateNewGame(){
+        var seleLevel = document.getElementById("seleLevel");
+        var MineCount = 0;
+        switch (seleLevel.value)
+        {
+            case '2':
+                MineCount = Math.floor( gameCol * gameRow * 0.05);
+                break;
+            case '3':
+                MineCount = Math.floor( gameCol * gameRow * 0.1);
+                break;
+            case '4':
+                MineCount = Math.floor( gameCol * gameRow * 0.15);
+                break;
+            case '5':
+                MineCount = Math.floor( gameCol * gameRow * 0.20);
+                break;
+            case '6':
+                MineCount = Math.floor( gameCol * gameRow * 0.25);
+                break;
+
+        }
+
+
+        var game = new Game(gameCol, gameRow, MineCount, cavanssudo.width, cavanssudo.height, cavanssudo);
+
+        game.Init();
+        game.Draw();
+    }
+    CreateNewGame();
+
+    </script>
+
+</body></html>
