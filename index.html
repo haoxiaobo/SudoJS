@@ -18,12 +18,14 @@
         <tbody><tr>
             <td>
                 <canvas id="canvassudo" width="400" height="400"></canvas><br>
+                <input type="checkbox" id='chkUseBuffer' checked="checked" onclick='btnUseBuffer_Click()'></input>双缓冲
                 难度：<select id="seleLevel">
                     <option value="2">容易</option>
                     <option value="3" selected="selected">一般</option>
                     <option value="4">较难</option>
                     <option value="5">困难</option>
                 </select>
+                
                 <button id="btnInitSudo" onclick="btnInitSudo_Click()">生成新数独</button>
                 <button id="btnEditMode" onclick="btnEditMode_Click()">编辑数独</button>
                 <button id="btnShowOptNumber" onclick="btnShowOptNumber_Click()">显示提示</button>
@@ -32,8 +34,6 @@
             <td><span id="spPos"></span></td>
         </tr>
     </tbody></table>
-
-    <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
     <script src="sudo.js"></script>
     <script>
     function btnInitSudo_Click() {
@@ -97,6 +97,12 @@
         s += " 缩放比率 " + window.devicePixelRatio + " \n";
         alert(s);
     }
+    
+    function btnUseBuffer_Click()
+    {
+        var ipt = document.getElementById("chkUseBuffer");
+        sudo.setUseBuffer(ipt.checked);
+    }
 
     //getInfo();  
 
@@ -104,7 +110,7 @@
     var cavanssudo = document.getElementById("canvassudo");
     var ctx = cavanssudo.getContext("2d");
     
-    var sudowidth = 400;
+    var sudowidth = 400;    
     var sudoheight = 400;
     
     cavanssudo.style.width = sudowidth + "px";
@@ -114,9 +120,10 @@
     cavanssudo.height = sudoheight * window.devicePixelRatio;
     
     var sudo = new Sudo(cavanssudo.width, cavanssudo.height, cavanssudo);
-
+    
     var seleLevel = document.getElementById("seleLevel");
     sudo.Init(seleLevel.value);
+    btnUseBuffer_Click();
     sudo.Draw();
     </script>
 
