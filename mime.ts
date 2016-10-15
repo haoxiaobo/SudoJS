@@ -9,7 +9,7 @@ class Game
     gameRowCount:number;
     mineCount:number;
     mineLeft:number;
-    Cells:[[Cell]];
+    Cells:Array<Array<Cell>>;
     ctx:CanvasRenderingContext2D;
 
     static thisGame:Game;
@@ -101,33 +101,33 @@ class Game
 
         this.ctx.fillRect(0, 0, this.Width, this.Height);
         this.ctx.font = "Bold "+this.ItemWidth / 1.5 +"px Arial";
-        for (var i = 0; i < this.gameColCount; i++) {
-            for (var j = 0; j < this.gameRowCount; j++) {
-                var cell = this.Cells[i][j];
-                this.DrawCell(j, i)
+        for (var x = 0; x < this.gameColCount; x++) {
+            for (var y = 0; y < this.gameRowCount; y++) {
+                var cell = this.Cells[x][y];
+                this.DrawCell({x:y, y:x});
             }
         }
     }
 
-    DrawCell(x,y, backcolor:string = "#eeeeee")
+    DrawCell(loc:Loc, backcolor:string = "#eeeeee")
     {
-        var cell = this.Cells[y][x];
-        var j = x;
-        var i = y;
+        var cell = this.Cells[loc.y][loc.x];
+        var x = loc.x;
+        var y = loc.y;
         if (cell.Status == CellStatus.Closed){
 
             this.ctx.fillStyle = "#bbbbbb";
-            this.ctx.fillRect(j * this.ItemWidth + 1, i * this.ItemHeight + 1, this.ItemWidth - 2, this.ItemHeight - 2 );
+            this.ctx.fillRect(x * this.ItemWidth + 1, y * this.ItemHeight + 1, this.ItemWidth - 2, this.ItemHeight - 2 );
             if (cell.HasFlag)
             {
                 this.ctx.fillStyle = "#ffbbbb";
             }
-            this.ctx.fillRect(j * this.ItemWidth + 1, i * this.ItemHeight + 1, this.ItemWidth - 2, this.ItemHeight - 2 );
+            this.ctx.fillRect(x * this.ItemWidth + 1, y * this.ItemHeight + 1, this.ItemWidth - 2, this.ItemHeight - 2 );
         }
         else
         {
             this.ctx.fillStyle =backcolor;
-            this.ctx.fillRect(j * this.ItemWidth + 1, i * this.ItemHeight + 1, this.ItemWidth - 2, this.ItemHeight - 2 );
+            this.ctx.fillRect(x * this.ItemWidth + 1, y * this.ItemHeight + 1, this.ItemWidth - 2, this.ItemHeight - 2 );
             this.ctx.font = "Bold " + this.ItemWidth/3  + "px Arial";
             this.ctx.fillStyle = "#000000";
             var text = '';
@@ -143,7 +143,7 @@ class Game
                         this.ctx.fillStyle = "#008800";
                         break;
                     case 2:
-                        this.ctx.fillStyle = "#888800";
+                        this.ctx.fillStyle = "#cccc00";
                         break;
                     case 3:
                         this.ctx.fillStyle = "#cc8800";
@@ -189,11 +189,11 @@ class Game
             if (!evt.ctrlKey && !evt.shiftKey && !evt.altKey) {
                 Game.thisGame.OpenCell(loc);
             }
-            if (evt.ctrlKey)  // 插旗
+            if (evt.altKey)  // 插旗
             {
                 Game.thisGame.SwitchFlag(loc);
             }
-            if(evt.altKey)
+            if(evt.shiftKey)
             {
                 // 快速打开
                 Game.thisGame.OpenAllAround(loc);
@@ -226,7 +226,7 @@ class Game
         var x = Math.floor(loc.x / this.ItemWidth);
         var y = Math.floor(loc.y / this.ItemHeight);
         var pos:Loc = {x: x, y: y};
-        console.log(x, y);
+        console.log(pos);
         var cell = this.Cells[y][x];
         if (cell.Status == CellStatus.Opened)
         {
@@ -234,7 +234,7 @@ class Game
         }
 
         cell.HasFlag = !cell.HasFlag ;
-        this.DrawCell(x, y);
+        this.DrawCell(pos);
     }
 
     ForeachAround(pos, fun)
@@ -286,12 +286,13 @@ class Game
                     return true;
 
                 cell.Status = CellStatus.Opened;
-                thisGame.Draw(loc.x, loc.y);
+                thisGame.DrawCell(loc);
                 if(cell.HasMine)
                 {
                     thisGame.SetLose(loc);
                     return false;
                 }
+                thisGame.OpenNeiberZero(loc);
                 return true;
             });
         }
@@ -322,7 +323,7 @@ class Game
         {
             if (cell.Status == CellStatus.Closed) {
                 cell.Status = CellStatus.Opened;
-                this.DrawCell(x, y);
+                this.DrawCell(pos);
             }
         }
         else{
@@ -332,7 +333,7 @@ class Game
         if(this.CheckWin()==true)
         {
             this.Draw();
-            window.alert("You Win!!")
+            window.alert("You Win!!");
             return;
         }
     }
@@ -357,7 +358,7 @@ class Game
     {
         var cell = this.Cells[pos.y][pos.x];
         cell.Status = CellStatus.Opened;
-        this.DrawCell(pos.x, pos.y);
+        this.DrawCell(pos);
 
         if (cell.SurMineCount != 0)
             return;
@@ -377,7 +378,7 @@ class Game
     {
         this.SetAllOpen();
         this.Draw();
-        this.DrawCell(loseFrom.x,loseFrom.y,"#ff0000");
+        this.DrawCell(loseFrom, "#ff0000");
     }
 
     SetAllOpen()
